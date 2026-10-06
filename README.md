@@ -18,7 +18,7 @@ flowchart TD
     E2 -- 是 --> N{加载成功?}
     N -- 是 --> F
     N -- 否 --> E3
-    E2 -- 否 --> E3[引导用户在 UI Load]
+    E2 -- 否 --> E3[先保存配置到实际 Downloads 并验证 再指引 UI Load]
     E3 --> F
     F --> G[用户手动 Start 并观察]
     G --> H{持续429 连接中断或明显无限循环?}
@@ -39,7 +39,7 @@ flowchart TD
     A[Audit skill 检查主 crawl] --> B{需要额外页面内容?}
     B -- 不需要 --> C[完成检查和报告]
     B -- 需要 --> D[列出具体待查 URL]
-    D --> E[补查才使用次 config 确认 List Mode 和 robots 设置]
+    D --> E[补查才使用次 config 手动加载前先保存到 Downloads 确认 List Mode 和 robots 设置]
     E --> F[用户上传清单并手动运行 保存原始及渲染 HTML]
     F --> G[保存独立补查文件到 Downloads]
     G --> H[Audit skill 合并证据]
@@ -62,6 +62,8 @@ flowchart TD
 
 Agent 从实际安装的 skill 目录解析内置 main 的路径，并检查 SF 所在主机的访问能力；必要时通过可用文件操作复制到可访问目录并核对 hash。GitHub URL 不能直接作为 config path。只有文件未安装、跨机器或访问受限且无法自动解决时，才提供具体复制/下载步骤或询问实际位置，不要求用户选择 profile。修改客户 sitemap 后直接运行，不能再加载通用文件覆盖。Storage Mode、内存、retention、MCP endpoint 和凭据由本机单独管理。
 
+**手动 Load 前，Agent 先将选定的 `.seospiderconfig` 保存到 SF 所在电脑的实际 Downloads，再检查文件可读、非空并核对源文件 hash，最后提供该 Downloads 路径让你加载并检查 sitemap。** 同名同内容直接复用，同名不同内容不覆盖，另存可辨识的新文件名。跨电脑或权限导致无法保存时，明确说明并先给下载／复制到 Downloads 的动作，不假称保存成功。已加载且未改变或已有适用 crawl 的情况不重复复制／加载。配置文件和稍后保存的 `.seospider` 爬取结果是两个文件。
+
 ## 使用与完成条件
 
 将本仓库根目录作为 skill 导入，入口 [SKILL.md](SKILL.md)。可显式调用 `$sf-shared-config`；其他 audit skills 后续通过它判断准备步骤是否必要。同一 SF 会话共享加载记录，不为每个检查重复配置。
@@ -80,7 +82,7 @@ Agent 从实际安装的 skill 目录解析内置 main 的路径，并检查 SF 
 
 ### 加载失败后，Agent 必须直接给出下一步
 
-1. 在 SF **Configuration → Load**（以实际版本菜单为准）加载已选定的 main 配置，提供实际文件路径；无法自动取得文件时给出该配置的下载位置。
+1. Agent 先把选定配置保存到 SF 电脑的实际 **Downloads** 并验证，提供完整路径；不能自动保存时先给该 binary 的下载／复制步骤。随后在 SF **Configuration → Load**（以实际版本菜单为准）选择这个文件。
 2. 确认 **Spider Mode**，在 **Configuration → Spider → Crawl → XML Sitemaps** 核对自动发现，或手动填写本次网站的 sitemap/index。
 3. 用户回复“配置已加载、sitemap 已确认”，随后手动 Start；完成分析后保存到 Downloads，提供实际文件路径和完成状态。
 
@@ -90,6 +92,6 @@ Agent 从实际安装的 skill 目录解析内置 main 的路径，并检查 SF 
 
 ## 当前验证和接入状态
 
-已做本地 skill 结构、链接和配置字段检查；SF UI/MCP及实际 crawl 验证待执行。HTTPS 与 robots 仓库尚未接入本 skill；实测后再更新它们的文档。没有宣称其他 checklist 由本仓库自动实现。
+已做本地 skill 结构、链接和配置字段检查；SF UI/MCP及实际 crawl 验证待执行。[HTTPS](https://github.com/timn-firstpage/Onsite_audit_HTTPS_related_checking) 与 [robots](https://github.com/timn-firstpage/Onsite_robot_txt_checking) 已接入此前提流程。没有宣称其他 checklist 由本仓库自动实现。
 
 官方参考：[配置和 MCP](https://www.screamingfrog.co.uk/seo-spider/user-guide/configuration/)、[List Mode](https://www.screamingfrog.co.uk/seo-spider/tutorials/how-to-use-list-mode/)、[Sitemap audit](https://www.screamingfrog.co.uk/seo-spider/tutorials/how-to-audit-xml-sitemaps/)。
