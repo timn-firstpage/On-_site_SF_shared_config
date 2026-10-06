@@ -2,7 +2,7 @@
 
 独立的 `sf-shared-config` skill，作为 HTTPS、robots.txt 及其他 onsite audit 的共用准备步骤。已有适用 crawl／导出就跳过；缺少证据时加载预设配置，引导用户在 SF UI 确认 sitemap、手动运行、保存文件到 Downloads，然后交回 audit skill。
 
-本仓库不自动启动 crawl、不判断网站是否通过、不生成审计 Excel。主／次 config path 每次由用户提供，不能静默换成默认配置。
+本仓库不自动启动 crawl、不判断网站是否通过、不生成审计 Excel。首次整站准备默认选择内置 **main**，不让用户选择主／次，也不要求重复提供能自动解析的路径。只有需要内容补查时才使用次配置。用户可提供路径覆盖默认；覆盖路径无效时不能静默退回内置配置。
 
 ## 主流程
 
@@ -13,7 +13,7 @@ flowchart TD
     B -- 没有 --> C[触发 SF config skill]
     C --> D{所需主 config 已可靠加载且未改变?}
     D -- 是 --> F[用户在 UI 确认网站范围及 sitemap]
-    D -- 否 --> E[加载用户提供路径的主 config]
+    D -- 否 --> E[默认使用内置 main 用户提供路径时优先使用]
     E --> E2{支持单独加载?}
     E2 -- 是 --> F
     E2 -- 否 --> E3[引导用户在 UI Load]
@@ -37,7 +37,7 @@ flowchart TD
     A[Audit skill 检查主 crawl] --> B{需要额外页面内容?}
     B -- 不需要 --> C[完成检查和报告]
     B -- 需要 --> D[列出具体待查 URL]
-    D --> E[加载用户提供的次 config 确认 List Mode 和 robots 设置]
+    D --> E[补查才使用次 config 确认 List Mode 和 robots 设置]
     E --> F[用户上传清单并手动运行 保存原始及渲染 HTML]
     F --> G[保存独立补查文件到 Downloads]
     G --> H[Audit skill 合并证据]
@@ -58,13 +58,15 @@ flowchart TD
 
 文件位于 [assets/sf-configs](assets/sf-configs)。这是基于用户 SF 24.0 sample 的候选，已校验字段和改动范围，**尚未在 SF UI 导入或运行实测**。不能称为已验证生产配置。导入后核对实际设置，首次使用小范围试跑；完整参数、资源边界和 checklist 覆盖见 [profiles](references/profiles.md)。
 
-上传到 GitHub 不代表 SF 能读取文件：用户需提供 SF 所在主机可访问的实际路径。修改客户 sitemap 后直接运行，不能再加载通用文件覆盖。Storage Mode、内存、retention、MCP endpoint 和凭据由本机单独管理。
+Agent 从实际安装的 skill 目录解析内置 main 的路径，并检查 SF 所在主机的访问能力；必要时通过可用文件操作复制到可访问目录并核对 hash。GitHub URL 不能直接作为 config path。只有文件未安装、跨机器或访问受限且无法自动解决时，才提供具体复制/下载步骤或询问实际位置，不要求用户选择 profile。修改客户 sitemap 后直接运行，不能再加载通用文件覆盖。Storage Mode、内存、retention、MCP endpoint 和凭据由本机单独管理。
 
 ## 使用与完成条件
 
 将本仓库根目录作为 skill 导入，入口 [SKILL.md](SKILL.md)。可显式调用 `$sf-shared-config`；其他 audit skills 后续通过它判断准备步骤是否必要。同一 SF 会话共享加载记录，不为每个检查重复配置。
 
-输入网站及范围、已有文件/crawl；无可用证据时提供主 config path。补查才提供次路径。用户负责 sitemap 确认、Start、监督、保存到实际 Downloads 并返回文件路径。
+输入网站及范围、已有文件/crawl 即可；无可用证据时默认 main。可选提供主／次 config path 覆盖内置文件。用户负责 sitemap 确认、Start、监督、保存到实际 Downloads 并返回文件路径。
+
+首次测试可以直接说：`使用 $sf-shared-config，网站是 https://example.com，没有现成 crawl，使用默认主配置。不要自动启动，加载后引导我确认 sitemap 和手动运行。`
 
 完成交接需要已确认网站、文件路径及完成/停止状态。共享 skill检查可访问文件，记录未验证的部分；audit skill仍须验证文件能加载、字段覆盖和网站问题。`.seospiderconfig` 是配置，`.seospider` 才是 crawl；仅内部数据库自动保存不能替代 Downloads 交接。支持导出时也可使用下游要求的 CSV/NDJSON。
 

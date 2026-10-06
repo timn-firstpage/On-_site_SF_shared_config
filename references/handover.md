@@ -63,4 +63,6 @@ phase: preparation / awaiting_user / handover. These are coordination states, ne
 route: existing_evidence / active_user_crawl / manual_new_crawl / manual_targeted_followup.
 Use null/unknown for facts not observed; never fill guessed paths, time, IDs or completion. Existing-evidence routes may have no config record. Load-state sources distinguish tool_verified, user_confirmed and unknown. A file can be present while SF readability remains unverified.
 
+For a new config selection, also record main_config.selection_source as bundled_default or user_override. Default main paths are resolved from the installed skill root or a verified accessible copy, not required from the user. Secondary defaults apply only when a targeted follow-up is needed. The user-provided paths in the example illustrate overrides rather than required first-run inputs.
+
 Resume from the recorded phase and shared config state. Do not repeat confirmed sitemap/config checkpoints unless website/profile/mode has changed. Stopped/partial evidence can still support selected checks, but cannot be called complete.

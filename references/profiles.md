@@ -1,6 +1,6 @@
 # Audit profile specifications
 
-These are SF 24.0 sample-derived candidates. No SF native-class roundtrip, UI import or live crawl has been tested here. The manifest records field-level changes and SHA256 hashes. Use only a user-selected path, never an automatic fallback.
+These are SF 24.0 sample-derived candidates. No SF native-class roundtrip, UI import or live crawl has been tested here. The manifest records field-level changes and SHA256 hashes. First-time/full-site preparation defaults to the bundled main profile; only targeted follow-up uses secondary. Resolve actual installed-host paths without asking the user to select main/secondary. Explicit user paths override these defaults, and invalid overrides must not silently fall back. Inaccessible defaults require concrete file-location/transfer guidance, not guessed local paths.
 
 ```text
 主配置 onsite-main-js.seospiderconfig
