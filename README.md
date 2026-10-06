@@ -1,0 +1,83 @@
+# SF Shared Config
+
+独立的 `sf-shared-config` skill，作为 HTTPS、robots.txt 及其他 onsite audit 的共用准备步骤。已有适用 crawl／导出就跳过；缺少证据时加载预设配置，引导用户在 SF UI 确认 sitemap、手动运行、保存文件到 Downloads，然后交回 audit skill。
+
+本仓库不自动启动 crawl、不判断网站是否通过、不生成审计 Excel。主／次 config path 每次由用户提供，不能静默换成默认配置。
+
+## 主流程
+
+```mermaid
+flowchart TD
+    A[开始 HTTPS 或 robots audit] --> B{已有本次网站可用的 crawl 或导出?}
+    B -- 有 --> J[Audit skill 读取并校验数据]
+    B -- 没有 --> C[触发 SF config skill]
+    C --> D{所需主 config 已可靠加载且未改变?}
+    D -- 是 --> F[用户在 UI 确认网站范围及 sitemap]
+    D -- 否 --> E[加载用户提供路径的主 config]
+    E --> E2{支持单独加载?}
+    E2 -- 是 --> F
+    E2 -- 否 --> E3[引导用户在 UI Load]
+    E3 --> F
+    F --> G[用户手动 Start 并观察]
+    G --> H{持续429 连接中断或明显无限循环?}
+    H -- 是 --> I[用户暂停检查 调整后恢复或重新运行]
+    I --> G
+    H -- 否 --> K[完成 crawl 和所需分析]
+    K --> L[用户保存或导出到 Downloads 并提供路径]
+    L --> M[SF config skill 完成交接]
+    M --> J
+```
+
+已有用户正在运行的 crawl 时，不覆盖配置、不重复启动；保留下一步并在用户完成后继续。孤立的 404、410、重定向是待审计证据，不是每次重新 crawl 的理由。没有有效 sitemap 时记录实际情况和发现限制，不把整个 audit 一律挡住。
+
+## 必要时的补查
+
+```mermaid
+flowchart TD
+    A[Audit skill 检查主 crawl] --> B{需要额外页面内容?}
+    B -- 不需要 --> C[完成检查和报告]
+    B -- 需要 --> D[列出具体待查 URL]
+    D --> E[加载用户提供的次 config 确认 List Mode 和 robots 设置]
+    E --> F[用户上传清单并手动运行 保存原始及渲染 HTML]
+    F --> G[保存独立补查文件到 Downloads]
+    G --> H[Audit skill 合并证据]
+    H --> C
+```
+
+## 两份候选 profile
+
+| 项目 | 主：onsite-main-js | 次：onsite-targeted-content |
+| --- | --- | --- |
+| 用途 | 整站 metadata、动态链接和重复内容 | 指定 URL 内容补查 |
+| 预设模式／渲染 | Spider／JavaScript | List／JavaScript |
+| Sitemap | robots 自动发现；用户 UI 确认或手填 | 关闭 |
+| 完整原始／渲染 HTML | 关闭 | 开启 |
+| Near Duplicates／自动分析 | 开启 | 默认关闭，按需开启 |
+| Threads／URLs per second | 2／2 | 2／1 |
+| 范围 | 没有一万条上限，保留 sample 的500万总上限 | depth 0，按用户清单；资源可增加记录 |
+
+文件位于 [assets/sf-configs](assets/sf-configs)。这是基于用户 SF 24.0 sample 的候选，已校验字段和改动范围，**尚未在 SF UI 导入或运行实测**。不能称为已验证生产配置。导入后核对实际设置，首次使用小范围试跑；完整参数、资源边界和 checklist 覆盖见 [profiles](references/profiles.md)。
+
+上传到 GitHub 不代表 SF 能读取文件：用户需提供 SF 所在主机可访问的实际路径。修改客户 sitemap 后直接运行，不能再加载通用文件覆盖。Storage Mode、内存、retention、MCP endpoint 和凭据由本机单独管理。
+
+## 使用与完成条件
+
+将本仓库根目录作为 skill 导入，入口 [SKILL.md](SKILL.md)。可显式调用 `$sf-shared-config`；其他 audit skills 后续通过它判断准备步骤是否必要。同一 SF 会话共享加载记录，不为每个检查重复配置。
+
+输入网站及范围、已有文件/crawl；无可用证据时提供主 config path。补查才提供次路径。用户负责 sitemap 确认、Start、监督、保存到实际 Downloads 并返回文件路径。
+
+完成交接需要已确认网站、文件路径及完成/停止状态。共享 skill检查可访问文件，记录未验证的部分；audit skill仍须验证文件能加载、字段覆盖和网站问题。`.seospiderconfig` 是配置，`.seospider` 才是 crawl；仅内部数据库自动保存不能替代 Downloads 交接。支持导出时也可使用下游要求的 CSV/NDJSON。
+
+输出小型本地 `sf-handover.json`，详细格式见 [handover](references/handover.md)。本仓库没有运行期 Python 第三方依赖，没有后台任务或自动清理器。
+
+## 工具边界
+
+优先实际支持的独立 Load 操作；可用时才使用 native UI。官方 MCP 的 `sf_crawl(config_path)` 会启动 crawl，因此本流程不能拿它代替“只加载”。没有独立操作就引导用户手动 Load，不进入 native-control 重试循环。
+
+路径错误返回具体修正；安全读取有限重试。MCP 限流与网站429分开记录，不自动重新抓取网站。等待用户时返回明确 checkpoint，不持续轮询。
+
+## 当前验证和接入状态
+
+已做本地 skill 结构、链接和配置字段检查；SF UI/MCP及实际 crawl 验证待执行。HTTPS 与 robots 仓库尚未接入本 skill；实测后再更新它们的文档。没有宣称其他 checklist 由本仓库自动实现。
+
+官方参考：[配置和 MCP](https://www.screamingfrog.co.uk/seo-spider/user-guide/configuration/)、[List Mode](https://www.screamingfrog.co.uk/seo-spider/tutorials/how-to-use-list-mode/)、[Sitemap audit](https://www.screamingfrog.co.uk/seo-spider/tutorials/how-to-audit-xml-sitemaps/)。

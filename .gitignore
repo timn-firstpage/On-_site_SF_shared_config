@@ -1,0 +1,8 @@
+runs/
+*.local.json
+*.local.toml
+.env
+__pycache__/
+*.pyc
+*.seospider
+sf-handover.json

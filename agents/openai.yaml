@@ -1,0 +1,4 @@
+interface:
+  display_name: "SF Shared Config"
+  short_description: "Prepare SF profiles and hand off manual audit crawls"
+  default_prompt: "Use $sf-shared-config to prepare my Screaming Frog configuration and guide the manual crawl handover."
