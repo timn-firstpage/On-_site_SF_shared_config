@@ -15,7 +15,9 @@ flowchart TD
     D -- 是 --> F[用户在 UI 确认网站范围及 sitemap]
     D -- 否 --> E[默认使用内置 main 用户提供路径时优先使用]
     E --> E2{支持单独加载?}
-    E2 -- 是 --> F
+    E2 -- 是 --> N{加载成功?}
+    N -- 是 --> F
+    N -- 否 --> E3
     E2 -- 否 --> E3[引导用户在 UI Load]
     E3 --> F
     F --> G[用户手动 Start 并观察]
@@ -74,7 +76,15 @@ Agent 从实际安装的 skill 目录解析内置 main 的路径，并检查 SF 
 
 ## 工具边界
 
-优先实际支持的独立 Load 操作；可用时才使用 native UI。官方 MCP 的 `sf_crawl(config_path)` 会启动 crawl，因此本流程不能拿它代替“只加载”。没有独立操作就引导用户手动 Load，不进入 native-control 重试循环。
+优先实际支持的独立 Load 操作；可用时才使用 native UI。官方 MCP 的 `sf_crawl(config_path)` 会启动 crawl，因此本流程不能拿它代替“只加载”。没有独立操作，或 native/独立加载失败时，立即引导用户手动 Load，不进入 native-control 重试循环。
+
+### 加载失败后，Agent 必须直接给出下一步
+
+1. 在 SF **Configuration → Load**（以实际版本菜单为准）加载已选定的 main 配置，提供实际文件路径；无法自动取得文件时给出该配置的下载位置。
+2. 确认 **Spider Mode**，在 **Configuration → Spider → Crawl → XML Sitemaps** 核对自动发现，或手动填写本次网站的 sitemap/index。
+3. 用户回复“配置已加载、sitemap 已确认”，随后手动 Start；完成分析后保存到 Downloads，提供实际文件路径和完成状态。
+
+不能只回复“native control failed”或无限 pending，也不再让用户选择主／次。Native helper/file 错误不代表配置文件损坏；SF UI 导入本身失败时保留原始错误并请求具体信息。完整 fallback 见 [手动 Load + sitemap 指引](references/manual-load-fallback.md)。
 
 路径错误返回具体修正；安全读取有限重试。MCP 限流与网站429分开记录，不自动重新抓取网站。等待用户时返回明确 checkpoint，不持续轮询。
 

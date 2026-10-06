@@ -60,6 +60,7 @@ Use the existing run directory for sf-handover.json. Local paths/records are not
 ```
 
 phase: preparation / awaiting_user / handover. These are coordination states, never spreadsheet results.
+Config-load failure switches immediately to awaiting_user with manual Load + sitemap confirmation as next_action. Preserve original native/tool errors without labelling them site errors. A manual instruction does not establish load_state=user_confirmed; wait for explicit confirmation or reliable observed evidence.
 route: existing_evidence / active_user_crawl / manual_new_crawl / manual_targeted_followup.
 Use null/unknown for facts not observed; never fill guessed paths, time, IDs or completion. Existing-evidence routes may have no config record. Load-state sources distinguish tool_verified, user_confirmed and unknown. A file can be present while SF readability remains unverified.
 
