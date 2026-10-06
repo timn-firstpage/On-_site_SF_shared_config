@@ -1,5 +1,7 @@
 # SF Shared Config
 
+<p align="center"><img src="assets/onsite-audit-cover.png" alt="Onsite audit cover showing HTTPS security, website inspection, crawl connections, hostname redirects, and an audit report" width="640"></p>
+
 独立的 `sf-shared-config` skill，作为 HTTPS、robots.txt 及其他 onsite audit 的共用准备步骤。已有适用 crawl／导出就跳过；缺少证据时加载预设配置，引导用户在 SF UI 确认 sitemap、手动运行、保存文件到 Downloads，然后交回 audit skill。
 
 本仓库不自动启动 crawl、不判断网站是否通过、不生成审计 Excel。首次整站准备默认选择内置 **main**，不让用户选择主／次，也不要求重复提供能自动解析的路径。只有需要内容补查时才使用次配置。用户可提供路径覆盖默认；覆盖路径无效时不能静默退回内置配置。
