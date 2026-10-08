@@ -1,6 +1,6 @@
 # Audit profile specifications
 
-These are SF 24.0 sample-derived candidates. No SF native-class roundtrip, UI import or live crawl has been tested here. The manifest records field-level changes and SHA256 hashes. First-time/full-site preparation defaults to the bundled main profile; only targeted follow-up uses secondary. Resolve actual installed-host paths without asking the user to select main/secondary. Explicit user paths override these defaults, and invalid overrides must not silently fall back. Inaccessible defaults require concrete file-location/transfer guidance, not guessed local paths.
+These are SF 24.0 sample-derived candidates. No SF native-class roundtrip, UI import or live crawl has been tested here. The manifest records field-level changes and SHA256 hashes; the main exclusion update was checked by comparing the complete parsed object graph. First-time/full-site preparation defaults to the bundled main profile; only targeted follow-up uses secondary. Resolve actual installed-host paths without asking the user to select main/secondary. Explicit user paths override these defaults, and invalid overrides must not silently fall back. Inaccessible defaults require concrete file-location/transfer guidance, not guessed local paths.
 
 ```text
 主配置 onsite-main-js.seospiderconfig
@@ -23,7 +23,7 @@ Near Duplicates：ON，90%，Only Indexable OFF；正文范围先保留 sample �
 Auto Crawl Analysis：ON，sample 未禁用分析任务；完成后核实实际需要的分析已生成，不能从空筛选推断通过。
 Crawl total：保留 sample 5,000,000，不是 10,000 上限；depth/folder/query/per-depth/per-subdomain 小上限均未启用。
 Fragment crawling、强制小写、移除全部参数：OFF。其余保护值保留 sample。
-不自动排除分页/筛选 URL；运行中发现循环时用户保存证据、暂停并调整，不保证无限 crawl 完成。
+Exclude：默认排除 /collections/<collection>/<filterA>+<filterB> 多条件组合路径（含 %2B，不写死域名）；保留普通 collection、单个筛选、商品页和 query 分页。先检查站点样本，避免把合法含 + 的落地页误认组合；其他筛选结构按实际证据补规则。运行中发现组合继续膨胀时用户保存证据、暂停并调整，不保证所有 URL 陷阱都已覆盖。
 
 次配置 onsite-targeted-content.seospiderconfig
 用途：已有主 crawl 之后，对用途不明、soft 404、动态指令等选定页面保留内容证据。
@@ -60,3 +60,5 @@ MCP endpoint/allowed directory、本机路径、API凭据由运行机提供，�
 ```
 
 [Field manifest](../assets/sf-configs/profile-manifest.json). Configuration values are chosen audit settings, not guarantees of site completeness.
+
+Collection exclusion details and exact rule: [crawl guard](collection-crawl-guard.md).

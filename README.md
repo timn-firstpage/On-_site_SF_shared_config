@@ -63,6 +63,16 @@ flowchart TD
     H --> C
 ```
 
+## 防止 collection 筛选组合膨胀
+
+主配置已内置 Exclude 规则，排除 `/collections/类别/筛选A+筛选B` 及 `%2B` 编码的多条件组合路径，适用于不同域名。普通 collection、单个筛选、商品页和 `?page=2` 分页继续保留；内容补查配置可用于少量组合页的独立审核。
+
+[可复制的规则](assets/sf-configs/collection-combination-exclude.txt) · [准备及运行检查](references/collection-crawl-guard.md)
+
+更新 Multica 的 shared skill 后，下一次加载新版主配置，在 **Configuration → Exclude** 核对该规则。已经加载的旧配置可手动粘贴这条规则并保留 sitemap 设置。若当前 crawl 已膨胀，先暂停并保存；已抓取的组合不会因新增排除而消失，需要干净结果时再由用户启动新的 crawl。旧数据仍可复用，不自动重爬。
+
+本规则针对已观察到的 `+` 路径组合，不覆盖所有 query/path 筛选结构；含 `+` 的合法落地页应按站点样本收窄规则。被排除部分须记录覆盖缺口，必要时单独抽查。5 URL/s 是速度上限，不能阻止 URL 总量增长。
+
 ## 两份候选 profile
 
 | 项目 | 主：onsite-main-js | 次：onsite-targeted-content |

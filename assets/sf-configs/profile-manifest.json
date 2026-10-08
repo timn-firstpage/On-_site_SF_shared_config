@@ -1,14 +1,13 @@
 {
   "source_zip": "onsite-robots-skill-config-update.zip",
   "source_zip_sha256": "74501536413ee5168e89feaeddaf5b8863de5e04a6be2005a18a9f66474bab87",
-  "validation": "Primitive-field readback and exact byte-change whitelist verified. No SF UI import, native-class roundtrip or live crawl tested here.",
+  "validation": "Profile-specific validation below; no SF native-class roundtrip, UI import or live crawl tested.",
   "profiles": [
     {
       "file": "onsite-main-js.seospiderconfig",
-      "bytes": 38399,
+      "bytes": 38477,
       "original_sha256": "dc1fb9036219fa04eff1af244a3d245ffda8f6f2e6193d4922b7394a29a0de59",
-      "candidate_sha256": "83bbefeeb7b89951a3812233739b63db3edb009b39a118a37ca8e7ef16001024",
-      "changed_byte_count": 8,
+      "candidate_sha256": "8d8c59d854f7deca3cb83079423f2f7becd97d05dc2c727eb1d0e3f976ab2430",
       "changes": [
         {
           "class": "SpiderCrawlConfig",
@@ -64,7 +63,14 @@
           "field": "mUrlRequestsPerSecond",
           "before": 2.0,
           "after": 5.0,
-          "offset": 34792
+          "offset": 34870
+        },
+        {
+          "class": "SpiderConfigExcludeManager",
+          "field": "mRawExcludeListString",
+          "before": "",
+          "after": "(?i)^https?://[^/?#]+/collections/[^/?#]+/[^/?#]+(?:\\+|%2b)[^/?#]+/?(?:[?#].*)?$",
+          "encoding": "Java TC_STRING; later reference handles rebased"
         }
       ],
       "settings": {
@@ -209,8 +215,13 @@
         "SpiderURLReWritingConfig": {
           "mConvertToLowercase": false,
           "mRemoveAllParameters": false
+        },
+        "SpiderConfigExcludeManager": {
+          "mRawExcludeListString": "(?i)^https?://[^/?#]+/collections/[^/?#]+/[^/?#]+(?:\\+|%2b)[^/?#]+/?(?:[?#].*)?$"
         }
-      }
+      },
+      "previous_candidate_sha256": "83bbefeeb7b89951a3812233739b63db3edb009b39a118a37ca8e7ef16001024",
+      "validation": "Parsed entire Java serialization before/after; object graph identical except exclusion string. String insertion rebased 759 later references. No SF UI import or live crawl tested."
     },
     {
       "file": "onsite-targeted-content.seospiderconfig",
