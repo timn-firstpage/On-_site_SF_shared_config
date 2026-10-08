@@ -72,10 +72,10 @@ flowchart TD
 | Sitemap | robots 自动发现；用户 UI 确认或手填 | 关闭 |
 | 完整原始／渲染 HTML | 关闭 | 开启 |
 | Near Duplicates／自动分析 | 开启 | 默认关闭，按需开启 |
-| Threads／URLs per second | 4／3（启用限速） | 2／1 |
+| Threads／URLs per second | 4／4（启用限速） | 2／1 |
 | 范围 | 没有一万条上限，保留 sample 的500万总上限 | depth 0，按用户清单；资源可增加记录 |
 
-主配置已从 2 threads／2 URL/s 调为 **4 threads／最多 3 URL/s**；内容补查仍为 2 threads／1 URL/s。更高速度可能触发网站限流或增加超时，JS 资源请求不受页面数简单约束；持续 429／5xx／超时时由用户暂停并降回 2 URL/s。稳定后可在 UI 试 4 URL/s，agent 不自动提高或重跑。更新仓库／Multica skill 后，新加载的主配置才使用此速度；已爬好的文件无需重爬，不在活动 crawl 上重新加载 profile。
+主配置已从 2 threads／2 URL/s 调为 **4 threads／最多 4 URL/s**；内容补查仍为 2 threads／1 URL/s。更高速度可能触发网站限流或增加超时，JS 资源请求不受页面数简单约束；持续 429／5xx／超时时由用户暂停并降回 2 URL/s。agent 不自动提高或重跑。更新仓库／Multica skill 后，新加载的主配置才使用此速度；已爬好的文件无需重爬，不在活动 crawl 上重新加载 profile。
 
 文件位于 [assets/sf-configs](assets/sf-configs)。这是基于用户 SF 24.0 sample 的候选，已校验字段和改动范围，**尚未在 SF UI 导入或运行实测**。不能称为已验证生产配置。导入后核对实际设置，首次使用小范围试跑；完整参数、资源边界和 checklist 覆盖见 [profiles](references/profiles.md)。
 
