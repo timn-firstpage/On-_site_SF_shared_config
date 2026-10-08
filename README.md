@@ -8,6 +8,21 @@
 
 ## 主流程
 
+### 直接提供已爬好的文件
+
+HTTPS、robots.txt、sitemap workflows 均可从用户提供的 **`.seospider`** 开始。填写 `source.mode: saved_crawl` 和 `source.crawl_file`，或直接提供文件让 agent 解析路径。先做文件预检，再复用匹配导出或通过实际支持的 SF 功能打开一次；不重新加载 global config、不重新确认 sitemap、不自动重新 crawl。各 audit 共享已加载文件和导出记录。
+
+`.seospiderconfig` 是配置，不是 crawl。二进制文件必须通过 SF 支持的读取方式打开；没有 reader 时，引导用户打开**已有 crawl**并导出所需结果，不能改成 Configuration → Load → Start。详见 [saved-crawl 操作与报错合同](references/saved-crawl-entry.md)。
+
+可选文件预检（只检查文件可读性／指纹，不解析 SF 数据）：
+
+```text
+python scripts/preflight_saved_crawl.py "path/to/site.seospider" --output "path/to/run/source-file.json"
+python -m unittest discover -s tests
+```
+
+预检输出 `file_ready_unverified` 不代表 crawl 有效。文件缺失／空文件／错误类型／读取失败都有结构化错误，退出码为 1；输出记录写入失败为 2。相同来源只预检一次，运行期记录不提交 Git。现有 instruction-only 准备流程仍无需第三方库；该辅助脚本仅使用 Python 标准库。
+
 ```mermaid
 flowchart TD
     A[开始 HTTPS 或 robots audit] --> B{已有本次网站可用的 crawl 或导出?}

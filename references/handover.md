@@ -4,6 +4,8 @@ Use this reference when deciding whether an existing file can skip setup, or whe
 
 ## Existing evidence
 
+For a file supplied directly by the user, follow [saved-crawl entry](saved-crawl-entry.md), including source.crawl_file, file fingerprint, one-open/shared-export handling and the saved-crawl manual fallback. This route skips new-crawl profile/sitemap confirmation. Record route=saved_crawl; source file presence and load success are separate states.
+
 Confirm the intended website and scope, crawl time and source. Match the caller's required fields/coverage using exports or SF metadata where accessible. Do not reject useful evidence solely because a historical profile or unrelated setting is unknown. Do not accept an arbitrary latest crawl. Keep the original ID when a different crawl is subsequently loaded for follow-up.
 
 A .seospider file requires the caller's supported SF load/import route. A name, extension, Java header or hash does not prove it is a complete readable crawl. If only CSV/NDJSON is accessible, pass files with their mapped fields; loading a configuration is not necessary to analyze those files.
@@ -61,7 +63,7 @@ Use the existing run directory for sf-handover.json. Local paths/records are not
 
 phase: preparation / awaiting_user / handover. These are coordination states, never spreadsheet results.
 Config-load failure switches immediately to awaiting_user with manual Load + sitemap confirmation as next_action. Preserve original native/tool errors without labelling them site errors. A manual instruction does not establish load_state=user_confirmed; wait for explicit confirmation or reliable observed evidence.
-route: existing_evidence / active_user_crawl / manual_new_crawl / manual_targeted_followup.
+route: saved_crawl / existing_evidence / active_user_crawl / manual_new_crawl / manual_targeted_followup.
 Use null/unknown for facts not observed; never fill guessed paths, time, IDs or completion. Existing-evidence routes may have no config record. Load-state sources distinguish tool_verified, user_confirmed and unknown. A file can be present while SF readability remains unverified.
 
 For a new config selection, also record main_config.selection_source as bundled_default or user_override. Default main paths are resolved from the installed skill root or a verified accessible copy, not required from the user. Secondary defaults apply only when a targeted follow-up is needed. The user-provided paths in the example illustrate overrides rather than required first-run inputs.

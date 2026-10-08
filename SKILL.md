@@ -9,6 +9,8 @@ This skill is a prerequisite route for HTTPS, robots.txt and other onsite audit 
 
 ## Choose the route
 
+Directly supplied `.seospider` files use [saved-crawl entry](references/saved-crawl-entry.md) first. Accept `source.mode=saved_crawl` and `source.crawl_file`; opening existing evidence does not require allow_new_crawl. Use the optional read-only preflight helper, preserve active sessions, open once or reuse matching exports, and share the source/export record across onsite flows. Import failure uses saved-crawl **Open + export** guidance, never profile Load + Start. Complete the caller's output/runtime preflight before expensive evidence retrieval.
+
 1. Obtain the intended site/scope, caller and any existing crawl/file evidence. Verify as far as available tools allow that evidence belongs to this site, its time/scope are suitable, and it is usable by the caller. A latest filename, HTTP 200, binary signature or a nonempty file alone is insufficient. Existing evidence need not have every historical SF setting verified.
 2. Suitable existing evidence: return its paths/crawl ID and provenance to the caller. Skip configuration and manual crawl guidance. If evidence covers only part of the caller's needs, retain it and identify the specific follow-up rather than forcing a whole-site repeat.
 3. An active crawl: do not load a profile over it or interrupt it. Ask for the user's intended handover when necessary. Finish this interaction with a concrete next action rather than indefinitely polling.
