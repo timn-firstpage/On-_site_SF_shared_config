@@ -11,7 +11,7 @@ robots：Respect；显示内部/外部被挡 URL；不使用 custom override。
 Sitemap：Crawl Linked XML Sitemaps ON；Auto Discover via robots ON；Crawl Specified Sitemaps OFF，不写死网站地址。用户在 UI 确认自动发现结果；没有声明或发现错误时，勾选 Crawl These Sitemaps 并填实际地址。完成本次修改后直接手动 run，不重新加载通用候选而覆盖网站输入。
 Internal / External Hyperlinks、Images、CSS、JavaScript、Canonicals、Next/Prev、Hreflang：Store/Crawl ON，相关网站范围由用户确认。
 Iframe：Store/Crawl ON，保留整站发现；SWF：Store/Crawl OFF。
-AJAX timeout 5 秒；response timeout 20 秒；5xx retries 1；threads 2；URL rate 2/s。JS 页面可额外发起资源请求，不能把 2/s 理解成全部网络请求上限。
+AJAX timeout 5 秒；response timeout 20 秒；5xx retries 1；threads 4；URL rate 3/s（启用限速）。这是 SF URL 请求上限，不保证实际达到每秒 3 页；JS 渲染、响应耗时及机器资源可能限制吞吐。JS 页面可额外发起资源请求，不能把 3/s 理解成全部网络请求上限。出现持续 429、5xx 或超时时由用户暂停并在 UI 将限速降回 2/s；稳定后可按网站情况手动试 4/s，不自动提高或重跑。
 Titles、Descriptions、H1/H2、Indexability、Word Count、Hash、Page Size、Response Time、Last Modified、Meta Robots、X-Robots、HTTP Headers：沿用 ON。
 SRCSET：ON，包含响应式图片候选，记录量可能增加。
 Structured Data：JSON-LD、Microdata、RDFa、Schema.org/Google validation ON。

@@ -7,8 +7,8 @@
       "file": "onsite-main-js.seospiderconfig",
       "bytes": 38399,
       "original_sha256": "dc1fb9036219fa04eff1af244a3d245ffda8f6f2e6193d4922b7394a29a0de59",
-      "candidate_sha256": "1ce944e1a311d2dcf5564c9f884fb73b27e567a4b38868f52378f2706ca5e9f5",
-      "changed_byte_count": 6,
+      "candidate_sha256": "46bf4424542b5a7be83aed129a9f67a02b2dd620ca7f5c9ecab070b3d84e91d2",
+      "changed_byte_count": 8,
       "changes": [
         {
           "class": "SpiderCrawlConfig",
@@ -51,6 +51,20 @@
           "before": true,
           "after": false,
           "offset": 8125
+        },
+        {
+          "class": "SpiderCrawlConfig",
+          "field": "mMaxThreads",
+          "before": 2,
+          "after": 4,
+          "offset": 8184
+        },
+        {
+          "class": "SpiderPerformanceConfig",
+          "field": "mUrlRequestsPerSecond",
+          "before": 2.0,
+          "after": 3.0,
+          "offset": 34792
         }
       ],
       "settings": {
@@ -122,7 +136,7 @@
           "mMaxNumQueryStrings": 5,
           "mMaxPageSizeBytes": 50000000,
           "mMaxRedirects": 10,
-          "mMaxThreads": 2,
+          "mMaxThreads": 4,
           "mMaxURLLength": 10000,
           "mPerDepthCrawlLimit": 1000,
           "mPerSubdomainLimit": 1000,
@@ -162,7 +176,7 @@
         },
         "SpiderPerformanceConfig": {
           "mLimitPerformance": true,
-          "mUrlRequestsPerSecond": 2.0
+          "mUrlRequestsPerSecond": 3.0
         },
         "SpiderRenderWindowConfig": {
           "mDeviceScaleFactor": 1.0,
