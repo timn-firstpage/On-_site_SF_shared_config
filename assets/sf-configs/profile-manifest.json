@@ -7,7 +7,7 @@
       "file": "onsite-main-js.seospiderconfig",
       "bytes": 38399,
       "original_sha256": "dc1fb9036219fa04eff1af244a3d245ffda8f6f2e6193d4922b7394a29a0de59",
-      "candidate_sha256": "3921255462e0c577c57efd6c6c5d841bee6406584f081579222b88213b4d2a87",
+      "candidate_sha256": "83bbefeeb7b89951a3812233739b63db3edb009b39a118a37ca8e7ef16001024",
       "changed_byte_count": 8,
       "changes": [
         {
@@ -63,7 +63,7 @@
           "class": "SpiderPerformanceConfig",
           "field": "mUrlRequestsPerSecond",
           "before": 2.0,
-          "after": 4.0,
+          "after": 5.0,
           "offset": 34792
         }
       ],
@@ -176,7 +176,7 @@
         },
         "SpiderPerformanceConfig": {
           "mLimitPerformance": true,
-          "mUrlRequestsPerSecond": 4.0
+          "mUrlRequestsPerSecond": 5.0
         },
         "SpiderRenderWindowConfig": {
           "mDeviceScaleFactor": 1.0,
